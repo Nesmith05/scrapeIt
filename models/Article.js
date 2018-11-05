@@ -21,7 +21,7 @@ var ArticleSchema = new Schema({
         required: true,
         unique: true
     },
-    entryDesc: {
+    desc: {
         type: String,
         required: true
     },
