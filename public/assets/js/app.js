@@ -62,3 +62,12 @@ $(document).on("click", "#savenote", function () {
   $("#titleinput").val("");
   $("#bodyinput").val("");
 });
+
+$("#clear").on("click", function() {
+  clearArticles();
+});
+
+
+function clearArticles (){
+  $("#articles").empty();
+}
