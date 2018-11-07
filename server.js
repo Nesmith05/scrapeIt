@@ -19,8 +19,8 @@ var PORT = 3000;
 // Initialize Express
 var app = express();
 
-app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
-app.set('view engine', 'hbs');
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 // Configure middleware
 
@@ -36,11 +36,23 @@ mongoose.connect("mongodb://localhost/mongoHeadlines", { useNewUrlParser: true }
 
 // Routes
 
-
+// app.get("/", function (req, res) {
+//     db.Article.find({}).then(function (results) {
+//         //console.log(results);
+//         if (results.length > 1) {
+//             res.render("index", { articles: results });
+//         } else {
+//             res.render("index");
+//         }
+//     }).catch(function (err) {
+//         console.log(err);
+//         return res.json(err);
+//     });
+// });
 // A GET route for scraping the echoJS website
 app.get("/scrape", function (req, res) {
     // First, we grab the body of the html with request
-    axios.get("https://aramajapan.com//").then(function (response) {
+    axios.get("https://aramajapan.com/").then(function (response) {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
         var $ = cheerio.load(response.data);
 
@@ -51,6 +63,7 @@ app.get("/scrape", function (req, res) {
 
             // Add the text and href of every link, and save them as properties of the result object
             result.title = $(element).find("h2").find("a").text();
+            result.date = $(element).find("div.share-module").find("div").find("span").attr("alt");
             result.link = $(element).find("h2").find("a").attr("href");
             result.imgLink = $(element).find("img").attr("src");
             result.desc = $(element).find("div").find("p").text();
@@ -60,31 +73,40 @@ app.get("/scrape", function (req, res) {
             db.Article.create(result)
                 .then(function (dbArticle) {
                     // View the added result in the console
-                    console.log(dbArticle);
+                    // console.log(dbArticle);
+                    res.render("index", {articles: result});
                 })
-                // .catch(function (err) {
-                //     // If an error occurred, send it to the client
-                //     return res.json(err);
-                // });
+                .catch(function (err) {
+                    // If an error occurred, send it to the client
+                });
         });
 
         // If we were able to successfully scrape and save an Article, send a message to the client
         res.send("Scrape Complete");
+        // res.redirect("/");
     });
 });
-
-
-
 // Route for getting all Articles from the db
 app.get("/articles", function (req, res) {
+    // Grab every document in the Articles collection
     db.Article.find({})
-        .then(function (dbArticle) {
-            res.json(dbArticle);
+        .then(function (result) {
+            // If we were able to successfully find Articles, send them back to the client
+            res.render("index", {articles: result});
+        
         })
         .catch(function (err) {
+            // If an error occurred, send it to the client
             res.json(err);
         });
 });
+
+
+app.get("/articles", function (req, res) {
+    db.Saved.find({}).then(function (results) {
+        res.render("saved", { articles: results });
+    })
+})
 
 // // Route for grabbing a specific Article by id, populate it with its note
 app.get("/articles/:id", function (req, res) {

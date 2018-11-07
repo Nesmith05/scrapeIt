@@ -11,10 +11,10 @@ var ArticleSchema = new Schema({
         type: String,
         required: true
     },
-    // summary: {
-    //     type: String,
-    //     required: true
-    // },
+    date: {
+        type: String,
+        required: true
+    },
     link: {
         //find validation
         type: String,
@@ -29,10 +29,10 @@ var ArticleSchema = new Schema({
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Comment'
     // },
-    // noteId: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "note"
-    // }
+    noteId: {
+        type: Schema.Types.ObjectId,
+        ref: "note"
+    }
 });
 
 var Article = mongoose.model("Article", ArticleSchema);

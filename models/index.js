@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 
 module.exports = {
     Article: require("./Article"),
-    Comment: require("./Comment")
+    Saved: require("./Saved"),
+    Note: require("./Note")
 
 }
