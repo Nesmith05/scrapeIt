@@ -49,6 +49,8 @@ mongoose.connect("mongodb://localhost/mongoHeadlines", { useNewUrlParser: true }
 //         return res.json(err);
 //     });
 // });
+
+app.get("/favicon.ico", function(req, res) {res.status(204)});
 // A GET route for scraping the echoJS website
 app.get("/scrape", function (req, res) {
     // First, we grab the body of the html with request
@@ -184,7 +186,7 @@ app.post("/save", function (req, res) {
 app.post("/api/deleteComment", (req, res) => {
     // console.log("delete comment route hit")
     let comment = req.body;
-    db.Notes.findByIdAndRemove(comment["_id"]). // Look for the Comment and Remove from DB
+    db.Notes.findByIdAndRemove(comment["_id"]).
         then(response => {
             if (response) {
                 res.send("Sucessfully Deleted");
