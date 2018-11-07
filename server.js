@@ -102,21 +102,21 @@ app.get("/articles", function (req, res) {
 });
 
 
-app.get("/articles", function (req, res) {
-    db.Saved.find({}).then(function (result) {
-        result.saved = true;
-        res.render("saved", { articles: result });
-    })
-})
+// app.get("/articles", function (req, res) {
+//     db.Saved.find({}).then(function (result) {
+//         result.saved = true;
+//         res.render("index", { articles: result });
+//     })
+// })
 app.get("/api/savedArticles", function (req, res) {
     // Grab every document in the Articles collection
-    db.Articles.find({}). // Find all Saved Articles
-    then(function(dbArticle) {
-      // If we were able to successfully find Articles, send them back to the client
-      res.json(dbArticle);
-    }).catch(function(err) {
-      // If an error occurred, send it to the client
-      res.json(err);
+    db.Article.find({ saved: true }, function (err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(data);
+        }
     });
 });
 
@@ -134,6 +134,7 @@ app.get("/articles/:id", function (req, res) {
             // If an error occurred, send it to the client
             res.json(err);
         });
+    
 });
 
 // Route for saving/updating an Article's associated Note
@@ -168,18 +169,6 @@ app.post("/save", function (req, res) {
 
 });
 
-
-// Route for showing saved articles
-app.get("/mysaved", function (req, res) {
-    db.Article.find({ saved: true }, function (err, data) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(data);
-        }
-    });
-});
 
 // Delete Comment 
 app.post("/api/deleteComment", (req, res) => {
