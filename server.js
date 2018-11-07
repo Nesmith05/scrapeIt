@@ -67,6 +67,7 @@ app.get("/scrape", function (req, res) {
             result.link = $(element).find("h2").find("a").attr("href");
             result.imgLink = $(element).find("img").attr("src");
             result.desc = $(element).find("div").find("p").text();
+            result.saved = false;
 
 
             // Create a new Article using the `result` object built from scraping
@@ -74,7 +75,7 @@ app.get("/scrape", function (req, res) {
                 .then(function (dbArticle) {
                     // View the added result in the console
                     // console.log(dbArticle);
-                    res.render("index", {articles: result});
+                    res.render("index", { articles: result });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
@@ -83,7 +84,6 @@ app.get("/scrape", function (req, res) {
 
         // If we were able to successfully scrape and save an Article, send a message to the client
         res.send("Scrape Complete");
-        // res.redirect("/");
     });
 });
 // Route for getting all Articles from the db
@@ -92,8 +92,8 @@ app.get("/articles", function (req, res) {
     db.Article.find({})
         .then(function (result) {
             // If we were able to successfully find Articles, send them back to the client
-            res.render("index", {articles: result});
-        
+            res.render("index", { articles: result });
+
         })
         .catch(function (err) {
             // If an error occurred, send it to the client
@@ -103,10 +103,22 @@ app.get("/articles", function (req, res) {
 
 
 app.get("/articles", function (req, res) {
-    db.Saved.find({}).then(function (results) {
-        res.render("saved", { articles: results });
+    db.Saved.find({}).then(function (result) {
+        result.saved = true;
+        res.render("saved", { articles: result });
     })
 })
+app.get("/api/savedArticles", function (req, res) {
+    // Grab every document in the Articles collection
+    db.Articles.find({}). // Find all Saved Articles
+    then(function(dbArticle) {
+      // If we were able to successfully find Articles, send them back to the client
+      res.json(dbArticle);
+    }).catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
 
 // // Route for grabbing a specific Article by id, populate it with its note
 app.get("/articles/:id", function (req, res) {
@@ -144,7 +156,51 @@ app.post("/articles/:id", function (req, res) {
         });
 });
 
+// saved articles
+app.post("/save", function (req, res) {
+    var data = req.body.id;
+
+    // db.Article.findOneAndUpdate({ _id: req.params.id }, { { "saved": true } }, { new: true }).then((function (results) {
+    //     res.json(results);
+    //     res.render("saved", results);
+    // }))
+
+
+});
+
+
+// Route for showing saved articles
+app.get("/mysaved", function (req, res) {
+    db.Article.find({ saved: true }, function (err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(data);
+        }
+    });
+});
+
+// Delete Comment 
+app.post("/api/deleteComment", (req, res) => {
+    // console.log("delete comment route hit")
+    let comment = req.body;
+    db.Notes.findByIdAndRemove(comment["_id"]). // Look for the Comment and Remove from DB
+        then(response => {
+            if (response) {
+                res.send("Sucessfully Deleted");
+            }
+        });
+}); 
+
 // Start the server
 app.listen(PORT, function () {
     console.log("App running on port " + PORT + "!");
 });
+
+
+// Pseudo-coding the rest because... 
+// Ideally, I would like the app to open up with a button that will allow the user to scrape from the website and render into the pageXOffset. 
+// The comments that the page allows you to make would return when the user clicks on it and can be deleted by the user if they wish. 
+// The "/scrape" page would redirect to the "articles" page with the results of the scrape and would allow the user to save articles. 
+// They can later access the saved articles and remove them whenever.

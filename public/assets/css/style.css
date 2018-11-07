@@ -1,22 +1,38 @@
-body { background-color: #F2F6D0 }
+body { background-color: rgb(253, 255, 240) }
 #wrapper {
   width: 960px;
   margin-left: auto;
   margin-right: auto;
   padding-top: 5%;
 }
-#articles {
-  display: inline-block;
+.jumbotron {
+  background-image: url("./images/architecture-billboards-blue-417350\(3\).png");
+  color: aliceblue;
+  resize: both;
   overflow: auto;
+  text-align: center;
+  border-bottom: 2px;
+  border-bottom-color: lightgrey; 
+  background-repeat: no-repeat;
+}
+
+.container{
+  display: inline-block;
+  list-style-type: none;
   width: 60%;
   height: 700px;
+  padding: 70px 0;
+  /* border: 3px solid green; */
+  text-align: center;
+
 }
 #notes {
   float: right;
   width: 30%;
 }
 img {
-    size: 50px;
+  max-width: 100%;
+    height: auto;
 }
 textarea, input {
   display: block;
